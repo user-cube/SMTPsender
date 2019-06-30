@@ -3,6 +3,24 @@ import argparse
 
 
 def connectAndSend(gmail__sender, gmail_passwd, TO, TEXT, SUBJECT, SPAM):
+    """
+
+    Parameters
+    ----------
+    gmail__sender - Sender email
+    gmail_passwd - Sender password
+    TO - Recipient's Email
+    TEXT - Email content
+    SUBJECT - Email subject
+    SPAM - Number of times to spam
+
+    Returns
+    -------
+    True - if the email was sent
+    without any problems, otherwise
+    false.
+
+    """
 
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()
@@ -21,9 +39,13 @@ def connectAndSend(gmail__sender, gmail_passwd, TO, TEXT, SUBJECT, SPAM):
             print("Email sent")
     except:
         print('Email not sent')
+        server.quit()
+        return False
     server.quit()
+    return True
 
 if __name__ == '__main__':
+    # Parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--to", help="Recipient's Email", default="teste@teste.pt")
     parser.add_argument("--sub", help="Email subject", default="Teste")
@@ -33,6 +55,7 @@ if __name__ == '__main__':
     parser.add_argument("--pwd", help="Sender password", default="1234")
     args = parser.parse_args()
 
+    #Set parsed arguments
     gmail_sender = args.email
     gmail_passwd = args.pwd
     TO = args.to
