@@ -1,18 +1,19 @@
 import smtplib
 import argparse
 
-
-def connectAndSend(gmail__sender, gmail_passwd, TO, TEXT, SUBJECT, SPAM):
+def connectAndSend(gmail__sender, GMAIL_PASSWD, TO, TEXT, SUBJECT, SPAM, PORT, SERVER):
     """
 
     Parameters
     ----------
     gmail__sender - Sender email
-    gmail_passwd - Sender password
+    GMAIL_PASSWD - Sender password
     TO - Recipient's Email
     TEXT - Email content
     SUBJECT - Email subject
     SPAM - Number of times to spam
+    SERVER - SMTP Server
+    PORT - Outgoing port
 
     Returns
     -------
@@ -22,19 +23,19 @@ def connectAndSend(gmail__sender, gmail_passwd, TO, TEXT, SUBJECT, SPAM):
 
     """
 
-    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server = smtplib.SMTP(SERVER, PORT)
     server.ehlo()
     server.starttls()
-    server.login(gmail_sender, gmail_passwd)
+    server.login(GMAIL_SENDER, GMAIL_PASSWD)
 
     BODY = '\r\n'.join(['To: %s' % TO,
-                        'From: %s' % gmail_sender,
+                        'From: %s' % GMAIL_SENDER,
                         'Subject: %s' % SUBJECT,
                         '', TEXT])
 
     try:
         for i in range(0, SPAM):
-            server.sendmail(gmail_sender, [TO], BODY)
+            server.sendmail(GMAIL_SENDER, [TO], BODY)
             print(i)
             print("Email sent")
     except:
@@ -53,18 +54,29 @@ if __name__ == '__main__':
     parser.add_argument("--spam", help="Number of emails to spam", default=1)
     parser.add_argument("--email", help="Sender email", default="teste@gmail.com")
     parser.add_argument("--pwd", help="Sender password", default="1234")
+    parser.add_argument("--server", help="SMTP Server", default="smtp.gmail.com")
+    parser.add_argument("--port", help="Outgoing port", default="587")
     args = parser.parse_args()
 
     #Set parsed arguments
-    gmail_sender = args.email
-    gmail_passwd = args.pwd
+    GMAIL_SENDER = args.email
+    if("@" not in GMAIL_SENDER):
+        print("Not an email")
+        exit()
+    GMAIL_PASSWD = args.pwd
     TO = args.to
     SUBJECT = args.sub
     TEXT = args.text
+    SERVER = args.server
+    try:
+        PORT = args.port
+        PORT = int(PORT)
+    except:
+        print("Port value not a number")
     try:
         SPAM = args.spam
         SPAM = int(SPAM)
     except:
         print("Spam value not a number")
 
-    connectAndSend(gmail_sender, gmail_passwd, TO, TEXT, SUBJECT, SPAM)
+    connectAndSend(GMAIL_SENDER, GMAIL_PASSWD, TO, TEXT, SUBJECT, SPAM, PORT, SERVER)
