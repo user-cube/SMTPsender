@@ -1,19 +1,8 @@
 import smtplib
 import argparse
 
-def connectAndSend(gmail__sender, GMAIL_PASSWD, TO, TEXT, SUBJECT, SPAM, PORT, SERVER):
+def connectAndSend():
     """
-
-    Parameters
-    ----------
-    gmail__sender - Sender email
-    GMAIL_PASSWD - Sender password
-    TO - Recipient's Email
-    TEXT - Email content
-    SUBJECT - Email subject
-    SPAM - Number of times to spam
-    SERVER - SMTP Server
-    PORT - Outgoing port
 
     Returns
     -------
@@ -31,6 +20,7 @@ def connectAndSend(gmail__sender, GMAIL_PASSWD, TO, TEXT, SUBJECT, SPAM, PORT, S
     BODY = '\r\n'.join(['To: %s' % TO,
                         'From: %s' % GMAIL_SENDER,
                         'Subject: %s' % SUBJECT,
+                        'CC: %s' % CC,
                         '', TEXT])
 
     try:
@@ -53,6 +43,7 @@ if __name__ == '__main__':
     parser.add_argument("--text", help="Email content", default="Here is an email generated with python")
     parser.add_argument("--spam", help="Number of emails to spam", default=1)
     parser.add_argument("--email", help="Sender email", default="teste@gmail.com")
+    parser.add_argument("--cc", help="CC email", default="teste@gmail.com")
     parser.add_argument("--pwd", help="Sender password", default="1234")
     parser.add_argument("--server", help="SMTP Server", default="smtp.gmail.com")
     parser.add_argument("--port", help="Outgoing port", default="587")
@@ -61,6 +52,10 @@ if __name__ == '__main__':
     #Set parsed arguments
     GMAIL_SENDER = args.email
     if("@" not in GMAIL_SENDER):
+        print("Not an email")
+        exit()
+    CC = args.cc
+    if("@" not in CC):
         print("Not an email")
         exit()
     GMAIL_PASSWD = args.pwd
@@ -79,4 +74,4 @@ if __name__ == '__main__':
     except:
         print("Spam value not a number")
 
-    connectAndSend(GMAIL_SENDER, GMAIL_PASSWD, TO, TEXT, SUBJECT, SPAM, PORT, SERVER)
+    connectAndSend()
